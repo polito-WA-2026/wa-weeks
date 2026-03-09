@@ -1,4 +1,3 @@
-'use strict';
 
 function waitPromise(duration) {
     // Create and return a new promise
