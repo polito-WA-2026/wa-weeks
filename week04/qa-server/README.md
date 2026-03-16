@@ -70,7 +70,19 @@ The `qa-server-v1` presents some APIs to perform some CRUD (Create, Read, Update
 
 ## Examples of other possible APIs
 
-### Vote an Answer
+### Upvote/downvote an Answer
+
+* `POST /api/answers/<id>/vote`
+* Description: Upvote/downvote an answer...
+* Request body: an object ... (Content-Type: `application/json`).
+
+```
+{"action": "upvote"}
+```
+* Response body: _None_
+* Response: `200 OK` (success) or `500 Internal Server Error` (generic error).
+
+
 
 ### Delete an Answer
 
