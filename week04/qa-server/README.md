@@ -74,3 +74,8 @@ The `qa-server-v1` presents some APIs to perform some CRUD (Create, Read, Update
 
 ### Delete an Answer
 
+* `DELETE /api/answers/<id>`
+* Description: Delete a given answer identified by its id.
+* Request body: _None_
+* Response body: Number of affected rows
+* Response: `200 OK` (success) or `500 Internal Server Error` (generic error).

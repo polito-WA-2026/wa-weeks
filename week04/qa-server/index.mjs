@@ -59,5 +59,17 @@ app.post('/api/answers', async (req, res) => {
 );
 
 
+// DELETE /api/answers/<id>
+app.delete('/api/answers/:id', async (req, res) => {
+
+  try {
+    const numRowChanges = await dao.deleteAnswer(req.params.id);
+    res.status(200).json(numRowChanges); 
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: `Database error during the deletion of the answer` });
+  }
+}
+);
 
 app.listen(3001, ()=>{console.log('Server ready');})
