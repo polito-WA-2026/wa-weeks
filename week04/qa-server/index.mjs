@@ -72,4 +72,18 @@ app.delete('/api/answers/:id', async (req, res) => {
 }
 );
 
+
+// POST /api/answers/<id>/vote
+app.post('/api/answers/:id/vote', async (req, res) => {
+
+  try {
+    const numRowChanges = await dao.voteAnswer(req.params.id, req.body.vote);
+    res.status(201).json(numRowChanges);  // could also be the whole object including the newId
+  } catch (err) {
+    res.status(503).json({ error: `Database error during the creation of the answer` });
+  }
+}
+);
+
+
 app.listen(3001, ()=>{console.log('Server ready');})
