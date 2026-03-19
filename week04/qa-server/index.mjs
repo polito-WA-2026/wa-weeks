@@ -1,6 +1,7 @@
 
 import express from 'express';
 import morgan from 'morgan';
+import {check, validationResult} from 'express-validator';
 
 import dao from './dao.mjs'; // module for accessing the DB.  NB: use ./ syntax for files in the same dir
 
@@ -25,7 +26,14 @@ app.get('/api/questions', (req, res) => {
 
 
 // GET /api/questions/<id>/answers
-app.get('/api/questions/:id/answers', async (req, res) => {
+app.get('/api/questions/:id/answers', [
+  check('id').isInt({ min: 1 })
+],
+  async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
   try {
     const result = await dao.listAnswersByQuestion(req.params.id);
     //console.log("result: "+JSON.stringify(result));
@@ -40,7 +48,18 @@ app.get('/api/questions/:id/answers', async (req, res) => {
 
   
 // POST /api/answers
-app.post('/api/answers', async (req, res) => {
+app.post('/api/answers', [
+  check('questionId').isInt({ min: 1 }),
+  check('score').isInt(),
+  check('date').isDate({format: 'YYYY-MM-DD', strictMode: true}),
+  check('text').isString().notEmpty(),
+  check('respondent').isString().notEmpty()
+],
+   async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
   const answer = {
     questionId: req.body.questionId,
     score: req.body.score,
@@ -74,7 +93,15 @@ app.delete('/api/answers/:id', async (req, res) => {
 
 
 // POST /api/answers/<id>/vote
-app.post('/api/answers/:id/vote', async (req, res) => {
+app.post('/api/answers/:id/vote', [
+  check('id').isInt({ min: 1 }),
+  check('vote').isIn(['upvote', 'downvote'])
+],
+   async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
   try {
     const numRowChanges = await dao.voteAnswer(req.params.id, req.body.vote);

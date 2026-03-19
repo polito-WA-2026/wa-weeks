@@ -73,8 +73,8 @@ The `qa-server-v1` presents some APIs to perform some CRUD (Create, Read, Update
 ### Upvote/downvote an Answer
 
 * `POST /api/answers/<id>/vote`
-* Description: Upvote/downvote an answer...
-* Request body: an object ... (Content-Type: `application/json`).
+* Description: Upvote/downvote an answer by 1 unit
+* Request body: an object containing the action to perform (Content-Type: `application/json`).
 
 ```
 {"action": "upvote"}
