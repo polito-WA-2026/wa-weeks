@@ -1,6 +1,6 @@
-# `qa-server-v1`
+# `qa-server`
 
-The `qa-server-v1` presents some APIs to perform some CRUD (Create, Read, Update, Delete) operations on the answers.
+The `qa-server` presents some APIs to perform some CRUD (Create, Read, Update, Delete) operations on the answers.
 
 ### List Questions
 
@@ -74,7 +74,7 @@ The `qa-server-v1` presents some APIs to perform some CRUD (Create, Read, Update
 
 * `POST /api/answers/<id>/vote`
 * Description: Upvote/downvote an answer by 1 unit
-* Request body: an object containing the action to perform (Content-Type: `application/json`).
+* Request body: an object containing the action to perform, either upvote or downvote (Content-Type: `application/json`).
 
 ```
 {"action": "upvote"}
@@ -91,3 +91,25 @@ The `qa-server-v1` presents some APIs to perform some CRUD (Create, Read, Update
 * Request body: _None_
 * Response body: Number of affected rows
 * Response: `200 OK` (success) or `500 Internal Server Error` (generic error).
+
+
+
+### Update an Answer
+
+* `PUT /api/answers/<id>`
+* Description: Update entirely an existing answer, identified by its id.
+* Request body: An object representing the entire answer (Content-Type: `application/json`).
+
+```
+{
+    "id": 1,
+    "text": "for of",
+    "respondent": "Alice",
+    "score": 3,
+    "date": "2023-03-07",
+    "questionId": 1
+}
+```
+
+* Response: `200 OK` (success) or `503 Service Unavailable` (generic error). If the request body is not valid, `422 Unprocessable Entity` (validation error).
+* Response body: _None_
