@@ -4,9 +4,16 @@
    
 </head>
 <body>
-<div id="time" >Hello</div>
-<div class="bold"></div>
-<div class="bold color"></div>
+    <div id="time">Hello</div>
+    <div class="bold"></div>
+
+    <form action="/add" method="POST">
+        <input type="text" name="t">
+        <input type="submit">
+    </form>
+    <div class="bold color"></div>
+
+
 <script  src="https://unpkg.com/dayjs@1.11.10/dayjs.min.js"
     integrity="sha384-DpVxUeeBWjUvUV1czyIHJAjh+jYUZFu2lLakbdua5vbwOrBGi1UgaKCHjTC+x3Ky"
     crossorigin="anonymous">
@@ -14,6 +21,23 @@
 <script>
 const timeElement = document.getElementById("time");
 timeElement.innerText = dayjs().format("HH:mm:ss");
+
+setInterval(() => {
+    timeElement.innerText = dayjs().format("HH:mm:ss");
+}, 1000);   
+
+const inputField = document.querySelector('input[type="text"]')
+inputField.addEventListener('input', event => {
+console.log(`The current entered value is: ${event.target.value}`);
+})
+inputField.addEventListener('change', event => {
+console.log(`The value has changed since last time: ${inputField.value}`);
+})
+
+document.querySelector('form').addEventListener('submit', event => {
+    event.preventDefault();
+    console.log(`The form is submitted with value: ${inputField.value}`);
+})  
 
 </script>
 </body>
