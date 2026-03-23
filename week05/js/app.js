@@ -41,7 +41,6 @@ function clearAnswers() {
     tableBody.innerHTML = "";  // Be careful using innerHTML for XSS, however with constant strings this is safe
 }
 
-
 function createAnswerNode(ans) {
 
     const newTd1 = document.createElement("td");
@@ -70,6 +69,9 @@ function createAnswerNode(ans) {
 
     newButton.addEventListener('click', event => {
         console.log('button pressed, id '+ans.id);
+        //console.log(event.target);
+
+        //newTd4.innerText = parseInt(newTd4.innerText)+1;
         vote(event.target.id);
     });
 
@@ -93,6 +95,7 @@ let answerList = ANSWERS.map(e => new Answer(...e));
 
 
 function createAnswerList(answerList) {
+    //const tableBody = document.querySelector('tbody');
     const tableBody = document.getElementById('answers');
     for (let ans of answerList) {
         const newRow = createAnswerNode(ans);
@@ -101,11 +104,9 @@ function createAnswerList(answerList) {
 
 }
 
-createAnswerList(answerList);
-
 answerList.forEach(e => console.log(e.str()));
 
 // Populate the list in the HTML ...
-// ...
+createAnswerList(answerList);
 
 

@@ -22,6 +22,7 @@
 const timeElement = document.getElementById("time");
 timeElement.innerText = dayjs().format("HH:mm:ss");
 
+// Updating DOM content via a periodically-called callback function
 setInterval(() => {
     timeElement.innerText = dayjs().format("HH:mm:ss");
 }, 1000);   
