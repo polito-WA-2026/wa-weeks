@@ -11,7 +11,10 @@ function AnswerRow(props) {
         <td>{e.text}</td>
         <td>{e.respondent}</td>
         <td>{e.score}</td>
-        <td><Button>Vote</Button></td>
+        <td>
+          <Button onClick={()=>props.vote(e.id)}>Vote</Button>
+          <Button className='mx-1' variant='danger' onClick={()=>props.delete(e.id)}>Delete</Button>
+        </td>
       </tr>
     );
   }

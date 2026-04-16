@@ -11,7 +11,8 @@ import { Question } from './QAModels.js';
 
 const question = new Question(1, 'Best way of enumerating an array in JS?', 'Enrico', '2024-03-01');
 question.init();
-const answers = question.getAnswers();
+const initialAnswers = question.getAnswers();
+console.log(initialAnswers);
 
 
 function MyHeader(props) {
@@ -37,6 +38,21 @@ function MyFooter(props) {
 
 
 function Main(props) {
+  const [answers, setAnswers] = useState(initialAnswers);
+
+  const voteAnswer = (id) => {
+    setAnswers(answerList => answerList.map( (e) => {
+      if (e.id === id) {
+        return {...e, score: e.score + 1};
+      } else {
+        return e;
+      }
+    }));
+  } 
+
+  const deleteAnswer = (id) => {
+    setAnswers(answerList => answerList.filter( (e) => e.id !== id));
+  }
 
   return (<>
     <Row>
@@ -49,7 +65,7 @@ function Main(props) {
     </Row>
     <Row>
       <Col>
-        <AnswerTable listOfAnswers={answers} />
+        <AnswerTable listOfAnswers={answers} vote={voteAnswer} delete={deleteAnswer} />
       </Col>
     </Row>
   </>
