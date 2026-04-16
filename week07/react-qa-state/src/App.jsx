@@ -38,21 +38,18 @@ function MyFooter(props) {
 
 
 function Main(props) {
-  const [answers, setAnswers] = useState(initialAnswers);
 
-  const voteAnswer = (id) => {
-    setAnswers(answerList => answerList.map( (e) => {
-      if (e.id === id) {
-        return {...e, score: e.score + 1};
-      } else {
-        return e;
-      }
-    }));
-  } 
+ const [answers, setAnswers] = useState(initialAnswers);
 
-  const deleteAnswer = (id) => {
-    setAnswers(answerList => answerList.filter( (e) => e.id !== id));
-  }
+  function voteAnswer(id, delta) {
+    setAnswers( answerList => 
+      answerList.map(e => e.id === id ? Object.assign({}, e, {score: e.score+delta}) : e)
+   );
+ }
+
+ const deleteAnswer = (id) => {
+  setAnswers( answerList => answerList.filter( e => e.id !== id  ) );
+ }
 
   return (<>
     <Row>
