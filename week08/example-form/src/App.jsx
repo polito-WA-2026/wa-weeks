@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Form, Button } from 'react-bootstrap';
 import './App.css'
 
 function MyForm (props) {
+  const [valid, setValid] = useState(false);
 
   const [name, setName] = useState('');
 
@@ -13,17 +16,23 @@ function MyForm (props) {
   }
 
   const handleChange = (event) => {
-    let val = event.target.value.toUpperCase();
+    console.log('Name changed: '+ event.target.value);
+    let val =  event.target.value;
+    //.substring(0,3);
+    if (val.length > 3) {
+      setValid(true);
+    }
 	  setName(val) ;
   };
 
   return (
-   <form onSubmit={handleSubmit}>
+   <Form onSubmit={handleSubmit}>
     <label> Name:
-      <input type="text" value={name} onChange={handleChange} />
+      <Form.Control type="text" value={name} onChange={handleChange} />
     </label>
-    <input type="submit" value="Submit" />
-  </form>
+    <Button variant="primary" type="submit">Submit</Button>
+    {valid ? <p>Valid</p> : <p>Invalid</p> }
+  </Form>
   );
 }
 
