@@ -14,6 +14,7 @@ function AnswerActions(props) {
 
 function AnswerRow(props) {
     const e = props.answer;
+    console.log("Rendering answer: ", JSON.stringify(e) );
     return (
       <tr>
         <td>{e.date.format("YYYY-MM-DD")}</td>
