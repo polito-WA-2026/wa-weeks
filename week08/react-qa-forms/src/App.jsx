@@ -59,6 +59,7 @@ function Main(props) {
 
   function addAnswer(answer) {
     setAnswers( answerList =>
+      // Use Max for new id just because we do not have a server that returns a new id. Do not use in real applications
       [...answerList, Object.assign({}, answer, {id: Math.max(...answerList.map(e => e.id)) + 1})] );
     setShowForm(false);
   }
