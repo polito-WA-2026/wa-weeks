@@ -58,6 +58,7 @@ function Main(props) {
   function addAnswer(answer) {
     setAnswers( answerList =>
       [...answerList, Object.assign({}, answer, {id: Math.max(...answerList.map(e => e.id)) + 1})] );
+    setShowForm(false);
   }
 
   return (<>
