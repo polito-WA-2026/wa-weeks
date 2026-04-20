@@ -6,6 +6,7 @@ import './App.css';
 
 import { AnswerTable } from './components/AnswerComponents.jsx';
 import { QuestionDescription } from './components/QuestionComponents.jsx';
+import { AnswerForm } from './components/FormComponents.jsx';
 
 import { Question } from './QAModels.js';
 
@@ -65,6 +66,11 @@ function Main(props) {
       <Col>
         <AnswerTable listOfAnswers={answers} vote={voteAnswer} 
         delete={deleteAnswer} />
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <AnswerForm />
       </Col>
     </Row>
   </>
