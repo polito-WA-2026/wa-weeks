@@ -5,10 +5,10 @@ import dayjs from "dayjs";
 
 function AnswerForm(props) {
 
-    const [ text, setText ] = useState("");
-    const [ date, setDate ] = useState("");
-    const [ respondent, setRespondent ] = useState("");
-    const [ score, setScore ] = useState(0);
+    const [ text, setText ] = useState(props.objToEdit ? props.objToEdit.text : "");
+    const [ date, setDate ] = useState(props.objToEdit ? props.objToEdit.date.format("YYYY-MM-DD") : "");
+    const [ respondent, setRespondent ] = useState(props.objToEdit ? props.objToEdit.respondent : "");
+    const [ score, setScore ] = useState(props.objToEdit ? props.objToEdit.score : 0);
 
     const handleScore = (event) => {
         setScore(event.target.value); // Cannot do parseInt here otherwise the single minus sign cannot be written
@@ -25,7 +25,12 @@ function AnswerForm(props) {
             respondent: respondent,
             score: parseInt(score)
         };
-        props.addAnswer(e);
+        if (props.objToEdit) {
+            e.id = props.objToEdit.id;
+            props.editAnswer(e);
+        } else {
+            props.addAnswer(e);
+        }
     };
 
     return (
@@ -52,7 +57,7 @@ function AnswerForm(props) {
 
             
 
-            <Button type="submit">Add Answer</Button>
+            <Button type="submit">{props.objToEdit ? "Edit Answer" : "Add Answer"}</Button>
             <Button variant="secondary" onClick={() => props.setShowForm(false)}>Cancel</Button> 
         </Form>
     )

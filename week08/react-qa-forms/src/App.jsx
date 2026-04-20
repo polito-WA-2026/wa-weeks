@@ -43,6 +43,8 @@ function Main(props) {
 
   const [ showForm, setShowForm ] = useState(false);
 
+  const [ objToEdit, setObjToEdit ] = useState(undefined);
+
   function voteAnswer(id, delta) {
     setAnswers( answerList => 
       answerList.map(e => e.id === id ? Object.assign({}, e, {score: e.score+delta}) : e)
@@ -61,6 +63,20 @@ function Main(props) {
     setShowForm(false);
   }
 
+  function editAnswer(newAnswer) {
+    setAnswers( answerList =>
+      answerList.map(e => e.id === newAnswer.id ? {...newAnswer} : e)
+    );
+    setShowForm(false);
+  }
+
+  function setEditAnswer(id) {
+    console.log("Editing answer with id: ", id);
+    setShowForm(true);
+    const obj = answers.find(e => e.id === id);
+    setObjToEdit(obj);
+  }
+
   return (<>
     <Row>
       <QuestionDescription question={question} />
@@ -73,12 +89,13 @@ function Main(props) {
     <Row>
       <Col>
         <AnswerTable listOfAnswers={answers} vote={voteAnswer} 
-        delete={deleteAnswer} />
+        delete={deleteAnswer} edit={setEditAnswer} />
       </Col>
     </Row>
     {showForm ? <Row>
       <Col>
-        <AnswerForm addAnswer={addAnswer} setShowForm={setShowForm} />
+        <AnswerForm addAnswer={addAnswer} setShowForm={setShowForm} objToEdit={objToEdit}
+           editAnswer={editAnswer} />
       </Col>
     </Row> :
     <Row>
