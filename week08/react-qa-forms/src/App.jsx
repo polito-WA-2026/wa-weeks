@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useState } from 'react';
-import { Col, Container, Row, Navbar } from 'react-bootstrap';
+import { Col, Container, Row, Navbar, Button } from 'react-bootstrap';
 import './App.css';
 
 import { AnswerTable } from './components/AnswerComponents.jsx';
@@ -41,6 +41,8 @@ function Main(props) {
 
   const [ answers, setAnswers ] = useState(initialAnswerList);
 
+  const [ showForm, setShowForm ] = useState(false);
+
   function voteAnswer(id, delta) {
     setAnswers( answerList => 
       answerList.map(e => e.id === id ? Object.assign({}, e, {score: e.score+delta}) : e)
@@ -73,11 +75,16 @@ function Main(props) {
         delete={deleteAnswer} />
       </Col>
     </Row>
+    {showForm ? <Row>
+      <Col>
+        <AnswerForm addAnswer={addAnswer} setShowForm={setShowForm} />
+      </Col>
+    </Row> :
     <Row>
       <Col>
-        <AnswerForm addAnswer={addAnswer} />
+        <Button onClick={() => setShowForm(true)}>Add an answer</Button>
       </Col>
-    </Row>
+    </Row>}
   </>
   );
 }

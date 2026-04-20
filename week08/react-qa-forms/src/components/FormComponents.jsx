@@ -53,6 +53,7 @@ function AnswerForm(props) {
             
 
             <Button type="submit">Add Answer</Button>
+            <Button variant="secondary" onClick={() => props.setShowForm(false)}>Cancel</Button> 
         </Form>
     )
 }
