@@ -68,6 +68,7 @@ function Main(props) {
       answerList.map(e => e.id === newAnswer.id ? {...newAnswer} : e)
     );
     setShowForm(false);
+    setObjToEdit(undefined);
   }
 
   function setEditAnswer(id) {

@@ -1,4 +1,4 @@
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import { useState } from "react";
 import dayjs from "dayjs";
 
@@ -10,6 +10,8 @@ function AnswerForm(props) {
     const [ respondent, setRespondent ] = useState(props.objToEdit ? props.objToEdit.respondent : "");
     const [ score, setScore ] = useState(props.objToEdit ? props.objToEdit.score : 0);
 
+    const [ errorMsg, setErrorMsg ] = useState("");
+
     const handleScore = (event) => {
         setScore(event.target.value); // Cannot do parseInt here otherwise the single minus sign cannot be written
     };
@@ -19,6 +21,13 @@ function AnswerForm(props) {
         console.log("Submitting answer: ", text, date, respondent, score);
         // Handle form submission logic here
         // add the new answer to the list of answers in the main component
+
+        if (parseInt(score) < 0) {
+            setErrorMsg("Score cannot be negative");
+            return;
+        }
+
+
         const e = {
             text: text,
             date: dayjs(date),
@@ -34,6 +43,8 @@ function AnswerForm(props) {
     };
 
     return (
+       <>
+       {errorMsg? <Alert variant="danger" dismissible onClose={() => setErrorMsg("")}>{errorMsg}</Alert> : false }
        <Form onSubmit={handleSubmit}>
             <Form.Group>
                 <Form.Label>Date</Form.Label>
@@ -60,6 +71,9 @@ function AnswerForm(props) {
             <Button type="submit">{props.objToEdit ? "Edit Answer" : "Add Answer"}</Button>
             <Button variant="secondary" onClick={() => props.setShowForm(false)}>Cancel</Button> 
         </Form>
+
+         </>
+
     )
 }
 
