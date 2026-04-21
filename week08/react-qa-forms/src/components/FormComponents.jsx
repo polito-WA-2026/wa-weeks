@@ -4,42 +4,46 @@ import dayjs from "dayjs";
 
 
 function AnswerForm(props) {
+    
+    const [date, setDate] = useState(props.editObj? props.editObj.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'));  //string: dayjs object is created only on submit
+    const [text, setText] = useState(props.editObj? props.editObj.text : '');
+    const [respondent, setRespondent] = useState(props.editObj? props.editObj.respondent : '');
+    const [score, setScore] = useState(props.editObj? props.editObj.score : 0);
 
-    const [ text, setText ] = useState(props.objToEdit ? props.objToEdit.text : "");
-    const [ date, setDate ] = useState(props.objToEdit ? props.objToEdit.date.format("YYYY-MM-DD") : "");
-    const [ respondent, setRespondent ] = useState(props.objToEdit ? props.objToEdit.respondent : "");
-    const [ score, setScore ] = useState(props.objToEdit ? props.objToEdit.score : 0);
-
-    const [ errorMsg, setErrorMsg ] = useState("");
-
-    const handleScore = (event) => {
-        setScore(event.target.value); // Cannot do parseInt here otherwise the single minus sign cannot be written
-    };
+    const [errorMsg, setErrorMsg] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log("Submitting answer: ", text, date, respondent, score);
-        // Handle form submission logic here
-        // add the new answer to the list of answers in the main component
 
-        if (parseInt(score) < 0) {
-            setErrorMsg("Score cannot be negative");
-            return;
-        }
-
-
-        const e = {
-            text: text,
-            date: dayjs(date),
-            respondent: respondent,
-            score: parseInt(score)
-        };
-        if (props.objToEdit) {
-            e.id = props.objToEdit.id;
-            props.editAnswer(e);
+        // Form validation
+        if (date === '')
+            setErrorMsg('Invalid date');
+        else if (isNaN(parseInt(score)))
+            setErrorMsg('Invalid score');
+        else if (parseInt(score) < 0) {
+            setErrorMsg('Negative scores are invalid');
         } else {
-            props.addAnswer(e);
+
+            const e = {
+                text: text,
+                respondent: respondent,
+                score: parseInt(score),
+                date: dayjs(date)
+            }
+
+
+            if (props.editObj) {  // decide if this is an edit or an add
+                e.id = props.editObj.id;
+                props.saveExistingAnswer(e);
+            } else {
+                props.addAnswer(e);
+            }
         }
+    };
+
+    function handleScore(event) {
+        setScore(event.target.value); // Cannot do parseInt here otherwise the single minus sign cannot be written
     };
 
     return (
@@ -68,11 +72,10 @@ function AnswerForm(props) {
 
             
 
-            <Button type="submit">{props.objToEdit ? "Edit Answer" : "Add Answer"}</Button>
+            <Button type="submit">{props.editObj? 'Save' : 'Add'}</Button>
             <Button variant="secondary" onClick={() => props.setShowForm(false)}>Cancel</Button> 
         </Form>
-
-         </>
+        </>
 
     )
 }

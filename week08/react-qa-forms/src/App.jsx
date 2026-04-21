@@ -43,8 +43,8 @@ function Main(props) {
 
   const [ showForm, setShowForm ] = useState(false);
 
-  const [ objToEdit, setObjToEdit ] = useState(undefined);
-
+  const [ editObj, setEditObj ] = useState(undefined);
+  
   function voteAnswer(id, delta) {
     setAnswers( answerList => 
       answerList.map(e => e.id === id ? Object.assign({}, e, {score: e.score+delta}) : e)
@@ -64,19 +64,17 @@ function Main(props) {
     setShowForm(false);
   }
 
-  function editAnswer(newAnswer) {
+  function saveExistingAnswer(newAnswer) {
     setAnswers( answerList =>
       answerList.map(e => e.id === newAnswer.id ? {...newAnswer} : e)
     );
     setShowForm(false);
-    setObjToEdit(undefined);
+    setEditObj(undefined);
   }
 
   function setEditAnswer(id) {
-    console.log("Editing answer with id: ", id);
+    setEditObj( answers.find( e => e.id === id) );
     setShowForm(true);
-    const obj = answers.find(e => e.id === id);
-    setObjToEdit(obj);
   }
 
   return (<>
@@ -91,13 +89,15 @@ function Main(props) {
     <Row>
       <Col>
         <AnswerTable listOfAnswers={answers} vote={voteAnswer} 
-        delete={deleteAnswer} edit={setEditAnswer} />
+        delete={deleteAnswer}  edit={setEditAnswer} />
       </Col>
     </Row>
     {showForm ? <Row>
       <Col>
-        <AnswerForm addAnswer={addAnswer} setShowForm={setShowForm} objToEdit={objToEdit}
-           editAnswer={editAnswer} />
+        {/* key in AnswerForm is needed to make React re-create the component when editObj.id changes,
+            i.e., when the editing form is open and another edit button is pressed. */}
+        <AnswerForm addAnswer={addAnswer} setShowForm={setShowForm} editObj={editObj}
+           saveExistingAnswer={saveExistingAnswer} key={editObj ? editObj.id : -1} />
       </Col>
     </Row> :
     <Row>
