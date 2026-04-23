@@ -1,6 +1,6 @@
 import { Form, Button, Alert, Row, Col } from "react-bootstrap";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import dayjs from "dayjs";
 
 
@@ -8,7 +8,8 @@ function FormRoute(props) {
     return (
       <Row>
         <Col>
-          <AnswerForm addAnswer={props.addAnswer}   />
+          <AnswerForm addAnswer={props.addAnswer} 
+             answers={props.answers} saveExistingAnswer={props.saveExistingAnswer}  />
         </Col>
       </Row>
 
@@ -18,10 +19,14 @@ function FormRoute(props) {
 function AnswerForm(props) {
     const navigate = useNavigate();
     
-    const [date, setDate] = useState(props.editObj? props.editObj.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'));  //string: dayjs object is created only on submit
-    const [text, setText] = useState(props.editObj? props.editObj.text : '');
-    const [respondent, setRespondent] = useState(props.editObj? props.editObj.respondent : '');
-    const [score, setScore] = useState(props.editObj? props.editObj.score : 0);
+    const { answerId } = useParams();
+
+    const editObj = answerId ? props.answers.find( e => e.id === parseInt(answerId)) : undefined;
+    
+    const [date, setDate] = useState(editObj? editObj.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'));  //string: dayjs object is created only on submit
+    const [text, setText] = useState(editObj? editObj.text : '');
+    const [respondent, setRespondent] = useState(editObj? editObj.respondent : '');
+    const [score, setScore] = useState(editObj? editObj.score : 0);
 
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -46,9 +51,10 @@ function AnswerForm(props) {
             }
 
 
-            if (props.editObj) {  // decide if this is an edit or an add
-                e.id = props.editObj.id;
+            if (editObj) {  // decide if this is an edit or an add
+                e.id = editObj.id;
                 props.saveExistingAnswer(e);
+                navigate('/'); // redirect to main page after saving the edited answer
             } else {
                 props.addAnswer(e);
                 navigate('/'); // redirect to main page after adding an answer

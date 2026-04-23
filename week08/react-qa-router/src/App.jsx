@@ -74,7 +74,7 @@ function App() {
 
   //const [ showForm, setShowForm ] = useState(false);
 
-  const [ editObj, setEditObj ] = useState(undefined);
+  //const [ editObj, setEditObj ] = useState(undefined);
   
   function voteAnswer(id, delta) {
     setAnswers( answerList => 
@@ -98,13 +98,13 @@ function App() {
     setAnswers( answerList =>
       answerList.map(e => e.id === newAnswer.id ? {...newAnswer} : e)
     );
-    setShowForm(false);
-    setEditObj(undefined);
+    //setShowForm(false);
+    //setEditObj(undefined);
   }
 
   function setEditAnswer(id) {
-    setEditObj( answers.find( e => e.id === id) );
-    setShowForm(true);
+    //setEditObj( answers.find( e => e.id === id) );
+    //setShowForm(true);
   }
 
 
@@ -114,6 +114,8 @@ function App() {
         <Route path="/" element={<Main answers={answers} voteAnswer={voteAnswer}
              deleteAnswer={deleteAnswer} setEditAnswer={setEditAnswer} />} />
         <Route path="/add" element={<FormRoute  addAnswer={addAnswer} />} />
+        <Route path="/edit/:answerId" element={<FormRoute answers={answers}
+             saveExistingAnswer={saveExistingAnswer} />} />
         <Route path="/*" element={<p>Not found</p>} />
       </Route>
     </Routes>
