@@ -40,6 +40,16 @@ function MyFooter(props) {
 
 function Main(props) {
 
+  // ROUTES
+
+  //  /  =  initial page  (list of answers)
+  //  /add  =  show the form needed to add a new answer
+  //  /edit/:id  =  show the form to edit the answer identified by :id
+
+  //const [ showForm, setShowForm ] = useState(false);
+
+  //const [ editObj, setEditObj ] = useState(undefined);
+  
 
   return (<>
     <Row>
@@ -67,15 +77,27 @@ function Main(props) {
   );
 }
 
+function DefaultRoute(props) {
+  return (
+    <Container fluid>
+      <p className="my-2">No data here: This is not a valid page!</p>
+      <Link to='/'>Please go back to main page</Link>
+    </Container>
+  );
+}
 
 function App() {
 
+    // state moved up into App
+
   const [ answers, setAnswers ] = useState(initialAnswerList);
 
-  //const [ showForm, setShowForm ] = useState(false);
-
-  //const [ editObj, setEditObj ] = useState(undefined);
+    // Not needed anymore, the info about the object are retrieved by using the id in the URL
+    //const [ editObj, setEditObj ] = useState(undefined);
   
+    // Not needed anymore, this state is "sort of" substituted by the /add URL
+    //const [ showForm, setShowForm ] = useState(false);
+
   function voteAnswer(id, delta) {
     setAnswers( answerList => 
       answerList.map(e => e.id === id ? Object.assign({}, e, {score: e.score+delta}) : e)
@@ -111,7 +133,7 @@ function App() {
         <Route path="/edit/:answerId" element={<FormRoute answers={answers}
              saveExistingAnswer={saveExistingAnswer} />} />
       </Route>
-      <Route path="/*" element={<p>Not found</p>} />
+      <Route path='/*' element={<DefaultRoute />} />
     </Routes>
   )
 }

@@ -19,6 +19,10 @@ function FormRoute(props) {
 function AnswerForm(props) {
     const navigate = useNavigate();
     
+    /* If we have an answerId in the URL, we retrieve the answer to edit from the list.
+    In a full-stack application, starting from the answerId, 
+    we could query the back-end to retrieve all the answer data (updated to last value). */
+   
     const { answerId } = useParams();
 
     const editObj = answerId ? props.answers.find( e => e.id === parseInt(answerId)) : undefined;
