@@ -102,12 +102,6 @@ function App() {
     //setEditObj(undefined);
   }
 
-  function setEditAnswer(id) {
-    //setEditObj( answers.find( e => e.id === id) );
-    //setShowForm(true);
-  }
-
-
   return (
     <Routes>
       <Route path="/" element={<Layout />} >
@@ -116,8 +110,8 @@ function App() {
         <Route path="/add" element={<FormRoute  addAnswer={addAnswer} />} />
         <Route path="/edit/:answerId" element={<FormRoute answers={answers}
              saveExistingAnswer={saveExistingAnswer} />} />
-        <Route path="/*" element={<p>Not found</p>} />
       </Route>
+      <Route path="/*" element={<p>Not found</p>} />
     </Routes>
   )
 }
