@@ -1,9 +1,22 @@
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button, Alert, Row, Col } from "react-bootstrap";
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import dayjs from "dayjs";
 
 
+function FormRoute(props) {
+    return (
+      <Row>
+        <Col>
+          <AnswerForm addAnswer={props.addAnswer}   />
+        </Col>
+      </Row>
+
+    )
+}
+
 function AnswerForm(props) {
+    const navigate = useNavigate();
     
     const [date, setDate] = useState(props.editObj? props.editObj.date.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'));  //string: dayjs object is created only on submit
     const [text, setText] = useState(props.editObj? props.editObj.text : '');
@@ -38,6 +51,7 @@ function AnswerForm(props) {
                 props.saveExistingAnswer(e);
             } else {
                 props.addAnswer(e);
+                navigate('/'); // redirect to main page after adding an answer
             }
         }
     };
@@ -73,11 +87,11 @@ function AnswerForm(props) {
             
 
             <Button type="submit">{props.editObj? 'Save' : 'Add'}</Button>
-            <Button variant="secondary" onClick={() => props.setShowForm(false)}>Cancel</Button> 
+            <Button variant="secondary" onClick={() => navigate ('/')}>Cancel</Button> 
         </Form>
         </>
 
     )
 }
 
-export { AnswerForm };
+export { FormRoute };

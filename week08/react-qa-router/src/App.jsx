@@ -1,12 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useState } from 'react';
+import { Routes, Route, Outlet, Link } from 'react-router';
 import { Col, Container, Row, Navbar, Button } from 'react-bootstrap';
 import './App.css';
 
 import { AnswerTable } from './components/AnswerComponents.jsx';
 import { QuestionDescription } from './components/QuestionComponents.jsx';
-import { AnswerForm } from './components/FormComponents.jsx';
+import { FormRoute } from './components/FormComponents.jsx';
 
 import { Question } from './QAModels.js';
 
@@ -39,9 +40,39 @@ function MyFooter(props) {
 
 function Main(props) {
 
+
+  return (<>
+    <Row>
+      <QuestionDescription question={question} />
+    </Row>
+    <Row>
+      <Col>
+        <h2>Current Answers</h2>
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <AnswerTable listOfAnswers={props.answers} vote={props.voteAnswer}
+          delete={props.deleteAnswer} edit={props.setEditAnswer} />
+      </Col>
+    </Row>
+    <Row>
+      <Col>
+        <Link to="/add">
+          <Button>Add an answer</Button>
+        </Link>
+      </Col>
+    </Row >
+  </>
+  );
+}
+
+
+function App() {
+
   const [ answers, setAnswers ] = useState(initialAnswerList);
 
-  const [ showForm, setShowForm ] = useState(false);
+  //const [ showForm, setShowForm ] = useState(false);
 
   const [ editObj, setEditObj ] = useState(undefined);
   
@@ -61,7 +92,6 @@ function Main(props) {
     setAnswers( answerList =>
       // Use Max for new id just because we do not have a server that returns a new id. Do not use in real applications
       [...answerList, Object.assign({}, answer, {id: Math.max(...answerList.map(e => e.id)) + 1})] );
-    setShowForm(false);
   }
 
   function saveExistingAnswer(newAnswer) {
@@ -77,47 +107,20 @@ function Main(props) {
     setShowForm(true);
   }
 
-  return (<>
-    <Row>
-      <QuestionDescription question={question} />
-    </Row>
-    <Row>
-      <Col>
-        <h2>Current Answers</h2>
-      </Col>
-    </Row>
-    {!showForm ?
-      <Row>
-        <Col>
-          <AnswerTable listOfAnswers={answers} vote={voteAnswer}
-            delete={deleteAnswer} edit={setEditAnswer} />
-        </Col>
-      </Row> :
 
-      <Row>
-        <Col>
-          {/* key in AnswerForm is needed to make React re-create the component when editObj.id changes,
-            i.e., when the editing form is open and another edit button is pressed. */}
-          <AnswerForm addAnswer={addAnswer} setShowForm={setShowForm} editObj={editObj}
-            saveExistingAnswer={saveExistingAnswer} key={editObj ? editObj.id : -1} />
-        </Col>
-      </Row>
-
-    }
-    {!showForm &&
-      <Row>
-        <Col>
-          <Button onClick={() => setShowForm(true)}>Add an answer</Button>
-        </Col>
-      </Row>
-    }
-  </>
-  );
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />} >
+        <Route path="/" element={<Main answers={answers} voteAnswer={voteAnswer}
+             deleteAnswer={deleteAnswer} setEditAnswer={setEditAnswer} />} />
+        <Route path="/add" element={<FormRoute  addAnswer={addAnswer} />} />
+        <Route path="/*" element={<p>Not found</p>} />
+      </Route>
+    </Routes>
+  )
 }
 
-
-function App() {
-
+function Layout() {
   return (
     <Container fluid>
       <Row>
@@ -125,7 +128,7 @@ function App() {
           <MyHeader />
         </Col>
       </Row>
-      <Main />
+      <Outlet />
       <Row>
         <Col>
           <MyFooter />
