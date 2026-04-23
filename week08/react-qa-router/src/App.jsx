@@ -86,25 +86,31 @@ function Main(props) {
         <h2>Current Answers</h2>
       </Col>
     </Row>
-    <Row>
-      <Col>
-        <AnswerTable listOfAnswers={answers} vote={voteAnswer} 
-        delete={deleteAnswer}  edit={setEditAnswer} />
-      </Col>
-    </Row>
-    {showForm ? <Row>
-      <Col>
-        {/* key in AnswerForm is needed to make React re-create the component when editObj.id changes,
+    {!showForm ?
+      <Row>
+        <Col>
+          <AnswerTable listOfAnswers={answers} vote={voteAnswer}
+            delete={deleteAnswer} edit={setEditAnswer} />
+        </Col>
+      </Row> :
+
+      <Row>
+        <Col>
+          {/* key in AnswerForm is needed to make React re-create the component when editObj.id changes,
             i.e., when the editing form is open and another edit button is pressed. */}
-        <AnswerForm addAnswer={addAnswer} setShowForm={setShowForm} editObj={editObj}
-           saveExistingAnswer={saveExistingAnswer} key={editObj ? editObj.id : -1} />
-      </Col>
-    </Row> :
-    <Row>
-      <Col>
-        <Button onClick={() => setShowForm(true)}>Add an answer</Button>
-      </Col>
-    </Row>}
+          <AnswerForm addAnswer={addAnswer} setShowForm={setShowForm} editObj={editObj}
+            saveExistingAnswer={saveExistingAnswer} key={editObj ? editObj.id : -1} />
+        </Col>
+      </Row>
+
+    }
+    {!showForm &&
+      <Row>
+        <Col>
+          <Button onClick={() => setShowForm(true)}>Add an answer</Button>
+        </Col>
+      </Row>
+    }
   </>
   );
 }
