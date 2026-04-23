@@ -106,7 +106,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Layout />} >
         <Route path="/" element={<Main answers={answers} voteAnswer={voteAnswer}
-             deleteAnswer={deleteAnswer} setEditAnswer={setEditAnswer} />} />
+             deleteAnswer={deleteAnswer} />} />
         <Route path="/add" element={<FormRoute  addAnswer={addAnswer} />} />
         <Route path="/edit/:answerId" element={<FormRoute answers={answers}
              saveExistingAnswer={saveExistingAnswer} />} />
