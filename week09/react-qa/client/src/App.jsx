@@ -11,9 +11,11 @@ import { FormRoute } from './components/FormComponents.jsx';
 
 import { Question } from './QAModels.js';
 
+import API from './API.js';
+
 const question = new Question(1, 'Best way of enumerating an array in JS?', 'Enrico', '2024-03-01');
 question.init();
-const initialAnswerList = question.getAnswers();
+//const initialAnswerList = question.getAnswers();
 
 
 function MyHeader(props) {
@@ -72,9 +74,23 @@ function AnswerRoute(props) {   // former Main component
 }
 
 function App() {
-    // state moved up into App
+  // state moved up into App
 
-  const [ answers, setAnswers ] = useState(initialAnswerList);
+  const [ answers, setAnswers ] = useState([]);
+
+  const [waiting, setWaiting] = useState(true);
+
+  useEffect(() => {
+    API.getAnswersByQuestionId(1)
+      .then(answers => {
+        setAnswers(answers);
+        setWaiting(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setWaiting(false);
+      });
+  }, []);
 
 
   function voteAnswer(id, delta) {
@@ -114,7 +130,8 @@ function App() {
   return (
     <Routes>
       <Route path='/' element={ <Layout /> } >
-        <Route index  element={ <AnswerRoute answers={answers} question={question}
+        <Route index  element={ waiting ? <Spinner /> :
+          <AnswerRoute answers={answers} question={question}
           voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} /> } />
         <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
         <Route path='/edit/:answerId' element={ <FormRoute 
