@@ -59,7 +59,7 @@ function AnswerRoute(props) {   // former Main component
     <Row>
       <Col>
         <AnswerTable listOfAnswers={props.answers} vote={props.voteAnswer} 
-        delete={props.deleteAnswer} />
+        delete={props.deleteAnswer} disabled={props.disabled} />
       </Col>
     </Row>
     <Row>
@@ -76,29 +76,31 @@ function AnswerRoute(props) {   // former Main component
 function App() {
   // state moved up into App
 
+  const [question, setQuestion] = useState({});
   const [ answers, setAnswers ] = useState([]);
 
   const [waiting, setWaiting] = useState(true);
-  const [disable, setDisable] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    API.getAnswersByQuestionId(1)
-      .then(answers => {
-        setAnswers(answers);
-        setWaiting(false);
-      })
+    const questionId = 1;
+    API.getQuestion(questionId)
+      .then(q => { setQuestion(q); return q.id; })
+      .then(id => refreshAnswerList(id))
       .catch(err => {
         console.log(err);
-        setWaiting(false);
-      });
+      }).
+      finally(() => { setWaiting(false); });
   }, []);
 
-  const refreshAnswerList = () => {
-    API.getAnswersByQuestionId(1)
+
+  const refreshAnswerList = (questionId) => {
+    API.getAnswersByQuestionId(questionId)
       .then(answers => {
         setAnswers(answers);
-      }
-  )};
+      })
+      .finally(() => { setWaiting(false); setDisabled(false); });
+  };
 
 
   function voteAnswer(id, delta) {
@@ -116,8 +118,9 @@ function App() {
     setAnswers(answerList =>
       answerList.map(e => e.id === id ? Object.assign({}, e, { status: 'deleted' }) : e)
     );
+    setDisabled(true);
     API.deleteAnswer(id)
-      .then(() => { refreshAnswerList(); })
+      .then(() => { refreshAnswerList(question.id); })
   }
 
 
@@ -147,7 +150,8 @@ function App() {
       <Route path='/' element={ <Layout /> } >
         <Route index  element={ waiting ? <Row><Col><Spinner /></Col></Row> :
           <AnswerRoute answers={answers} question={question}
-          voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} /> } />
+          voteAnswer={voteAnswer} deleteAnswer={deleteAnswer}
+          disabled={disabled} /> } />
         <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
         <Route path='/edit/:answerId' element={ <FormRoute 
           answerList={answers}

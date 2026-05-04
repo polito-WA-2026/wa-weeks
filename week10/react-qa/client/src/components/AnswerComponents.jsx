@@ -7,8 +7,8 @@ function AnswerActions(props) {
   return (
     <>
       <Button className="mx-1" variant="primary" onClick={props.upvote}><i className="bi bi-arrow-up"></i></Button>
-      <Button className="mx-1" variant="primary" disabled={props.disable} onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
-      <Button className="mx-1" variant="danger" onClick={props.delete}><i className="bi bi-trash"></i></Button>
+      <Button className="mx-1" variant="primary" onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
+      <Button className="mx-1" variant="danger" onClick={props.delete} disabled={props.disabled}><i className="bi bi-trash"></i></Button>
       <Link to={`/edit/${props.editId}`} >
         <Button className="mx-1" variant="warning"><i className="bi bi-pencil"></i></Button>
       </Link>
@@ -36,7 +36,7 @@ function AnswerRow(props) {
         <td>{e.respondent}</td>
         <td>{e.score}</td>
         <td><AnswerActions upvote={()=>props.vote(e.id, 1)} downvote={()=>props.vote(e.id, -1)}
-                delete={()=>props.delete(e.id)} editId={e.id} /></td>
+                delete={()=>props.delete(e.id)} editId={e.id} disabled={props.disabled} /></td>
       </tr>
     );
   }
@@ -58,7 +58,7 @@ function AnswerRow(props) {
           {/* the key can be the answer id, if unique */}
                   {props.listOfAnswers.map( (e) => 
                    <AnswerRow key={e.id} answer={e} vote={props.vote} delete={props.delete} 
-                   edit={props.edit} /> )
+                   edit={props.edit} disabled={props.disabled} /> )
           }
         </tbody>
       </Table>
