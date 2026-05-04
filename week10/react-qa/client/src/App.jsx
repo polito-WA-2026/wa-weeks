@@ -79,6 +79,7 @@ function App() {
   const [ answers, setAnswers ] = useState([]);
 
   const [waiting, setWaiting] = useState(true);
+  const [disable, setDisable] = useState(false);
 
   useEffect(() => {
     API.getAnswersByQuestionId(1)
@@ -92,6 +93,13 @@ function App() {
       });
   }, []);
 
+  const refreshAnswerList = () => {
+    API.getAnswersByQuestionId(1)
+      .then(answers => {
+        setAnswers(answers);
+      }
+  )};
+
 
   function voteAnswer(id, delta) {
     setAnswers(answerList =>
@@ -100,9 +108,16 @@ function App() {
   }
 
   function deleteAnswer(id) {
+    /*
     setAnswers(answerList =>
       answerList.filter(e => e.id !== id)
     );
+    */
+    setAnswers(answerList =>
+      answerList.map(e => e.id === id ? Object.assign({}, e, { status: 'deleted' }) : e)
+    );
+    API.deleteAnswer(id)
+      .then(() => { refreshAnswerList(); })
   }
 
 

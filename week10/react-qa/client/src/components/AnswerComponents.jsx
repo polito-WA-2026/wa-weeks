@@ -7,7 +7,7 @@ function AnswerActions(props) {
   return (
     <>
       <Button className="mx-1" variant="primary" onClick={props.upvote}><i className="bi bi-arrow-up"></i></Button>
-      <Button className="mx-1" variant="primary" onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
+      <Button className="mx-1" variant="primary" disabled={props.disable} onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
       <Button className="mx-1" variant="danger" onClick={props.delete}><i className="bi bi-trash"></i></Button>
       <Link to={`/edit/${props.editId}`} >
         <Button className="mx-1" variant="warning"><i className="bi bi-pencil"></i></Button>
@@ -18,8 +18,19 @@ function AnswerActions(props) {
 
 function AnswerRow(props) {
     const e = props.answer;
+
+    let statusClass = '';
+
+    switch(e.status) {
+      case 'deleted':
+        statusClass = 'table-danger';
+        break;
+      default:
+        break;
+    }
+
     return (
-      <tr>
+      <tr className={statusClass}>
         <td>{e.date.format("YYYY-MM-DD")}</td>
         <td>{e.text}</td>
         <td>{e.respondent}</td>
