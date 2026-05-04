@@ -17,7 +17,7 @@ const port = 3001;
 // set-up the middlewares
 app.use(morgan('dev'));
 app.use(express.json()); // To automatically decode incoming json
-app.use(cors());
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 /*** APIs ***/
 
