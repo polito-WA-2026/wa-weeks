@@ -9,12 +9,12 @@ import { AnswerTable } from './components/AnswerComponents.jsx';
 import { QuestionDescription } from './components/QuestionComponents.jsx';
 import { FormRoute } from './components/FormComponents.jsx';
 
-import { Question } from './QAModels.js';
+//import { Question } from './QAModels.js';
 
 import API from './API.js';
 
-const question = new Question(1, 'Best way of enumerating an array in JS?', 'Enrico', '2024-03-01');
-question.init();
+//const question = new Question(1, 'Best way of enumerating an array in JS?', 'Enrico', '2024-03-01');
+//question.init();
 //const initialAnswerList = question.getAnswers();
 
 
@@ -48,8 +48,9 @@ function AnswerRoute(props) {   // former Main component
 
 
   return (<>
-    {props.errorMsg ? <Alert variant='danger' dismissible 
-      onClose={()=>props.setErrorMsg('')}>{props.errorMsg}</Alert> : null}
+    {props.errorMsg? <Row><Col><Alert
+    variant='danger' dismissible onClose={()=>props.setErrorMsg('')}>
+      {props.errorMsg}</Alert></Col></Row> : null}
     <Row>
       <QuestionDescription question={props.question} />
     </Row>
@@ -144,7 +145,8 @@ function App() {
     );
     setDisabled(true);
     API.deleteAnswer(id)
-      .then(() => { refreshAnswerList(question.id); })
+      .catch( err => handleError(err) )
+      .finally( () => refreshAnswerList(question.id) );
   }
 
 

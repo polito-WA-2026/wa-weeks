@@ -1,17 +1,22 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Button, Table } from 'react-bootstrap';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 function AnswerActions(props) {
+  const navigate = useNavigate();
+
   return (
     <>
       <Button className="mx-1" variant="primary" onClick={props.upvote} disabled={props.disabled}><i className="bi bi-arrow-up"></i></Button>
       <Button className="mx-1" variant="primary" onClick={props.downvote} disabled={props.disabled}><i className="bi bi-arrow-down"></i></Button>
       <Button className="mx-1" variant="danger" onClick={props.delete} disabled={props.disabled}><i className="bi bi-trash"></i></Button>
-      <Link to={`/edit/${props.editId}`} >
-        <Button className="mx-1" variant="warning" disabled={props.disabled}><i className="bi bi-pencil"></i></Button>
+      {/* <Link to={`/edit/${props.editId}`} >
+        <Button className="mx-1" variant="warning"><i className="bi bi-pencil"></i></Button>
       </Link>
+      */}
+      <Button className="mx-1" variant="warning" disabled={props.disabled} 
+          onClick={()=>navigate(`/edit/${props.editId}`)}><i className="bi bi-pencil"></i></Button>
     </>
   );
 }
