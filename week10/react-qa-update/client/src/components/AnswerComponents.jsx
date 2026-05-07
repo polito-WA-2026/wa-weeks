@@ -6,11 +6,11 @@ import { Link } from 'react-router';
 function AnswerActions(props) {
   return (
     <>
-      <Button className="mx-1" variant="primary" onClick={props.upvote}><i className="bi bi-arrow-up"></i></Button>
-      <Button className="mx-1" variant="primary" onClick={props.downvote}><i className="bi bi-arrow-down"></i></Button>
+      <Button className="mx-1" variant="primary" onClick={props.upvote} disabled={props.disabled}><i className="bi bi-arrow-up"></i></Button>
+      <Button className="mx-1" variant="primary" onClick={props.downvote} disabled={props.disabled}><i className="bi bi-arrow-down"></i></Button>
       <Button className="mx-1" variant="danger" onClick={props.delete} disabled={props.disabled}><i className="bi bi-trash"></i></Button>
       <Link to={`/edit/${props.editId}`} >
-        <Button className="mx-1" variant="warning"><i className="bi bi-pencil"></i></Button>
+        <Button className="mx-1" variant="warning" disabled={props.disabled}><i className="bi bi-pencil"></i></Button>
       </Link>
     </>
   );

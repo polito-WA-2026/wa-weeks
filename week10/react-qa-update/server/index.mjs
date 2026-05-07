@@ -144,7 +144,8 @@ app.put('/api/answers/:id', [
 
   try {
     const numRowChanges = await dao.updateAnswer(answer);
-    res.json(numRowChanges);
+    setTimeout(()=>res.json(numRowChanges), answerDelay);
+    //res.json(numRowChanges);
     //res.status(200).end();
   } catch(err) {
     console.log(err);

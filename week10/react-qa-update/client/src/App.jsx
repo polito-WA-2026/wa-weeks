@@ -48,6 +48,8 @@ function AnswerRoute(props) {   // former Main component
 
 
   return (<>
+    {props.errorMsg ? <Alert variant='danger' dismissible 
+      onClose={()=>props.setErrorMsg('')}>{props.errorMsg}</Alert> : null}
     <Row>
       <QuestionDescription question={props.question} />
     </Row>
@@ -81,6 +83,7 @@ function App() {
 
   const [waiting, setWaiting] = useState(true);
   const [disabled, setDisabled] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const questionId = 1;
@@ -94,6 +97,23 @@ function App() {
   }, []);
 
 
+  function handleError(err) {
+    console.log("handleError called: JSON=", JSON.stringify(err));
+    console.log(err);
+    let errMsg = 'Unkwnown error';
+    if (err.errors) {
+      if (err.errors[0].msg) {
+        errMsg = err.errors[0].msg;
+      }
+    } else {
+      if (err.error) {
+        errMsg = err.error;
+      }
+    }
+    setErrorMsg(errMsg);
+
+  }
+
   const refreshAnswerList = (questionId) => {
     API.getAnswersByQuestionId(questionId)
       .then(answers => {
@@ -105,8 +125,12 @@ function App() {
 
   function voteAnswer(id, delta) {
     setAnswers(answerList =>
-      answerList.map(e => e.id === id ? Object.assign({}, e, { score: e.score + delta }) : e)
+      answerList.map(e => e.id === id ? Object.assign({}, e, { score: e.score + delta , status: 'updated'}) : e)
     );
+
+    API.voteAnswer(id, delta)
+      .catch( err => handleError(err) )
+      .finally(() => { refreshAnswerList(question.id); });
   }
 
   function deleteAnswer(id) {
@@ -134,14 +158,26 @@ function App() {
     // in general there can be multiple clients, and the server is the place to compute the unique id.
       answerList => 
         // Use Max for new id just because we do not have a server that returns a new id. Do not use in real applications
-        [...answerList, Object.assign({}, answer, {id: Math.max(...answerList.map(e => e.id)) + 1})]
+        [...answerList, Object.assign({}, answer, {id: Math.max(...answerList.map(e => e.id)) + 1},
+          {status: 'added'}  )]
     );
+
+    setDisabled(true);
+    const newAnswer = Object.assign({}, answer, {questionId: 12345});
+    API.addAnswer(newAnswer)
+      .catch( err => handleError(err) )
+      .finally( ()=> refreshAnswerList(question.id) );
+
   }
 
   function saveExistingAnswer(ans) {
     setAnswers( answerList =>
-      answerList.map( e => e.id === ans.id ? ans : e)
+      answerList.map( e => e.id === ans.id ? {...ans, status: 'updated'} : e)
     );
+    setDisabled(true);
+    API.updateAnswer(ans)
+      .catch( err => handleError(err) )
+      .finally( () => refreshAnswerList(question.id) ); 
 
   }
 
@@ -151,7 +187,7 @@ function App() {
         <Route index  element={ waiting ? <Row><Col><Spinner /></Col></Row> :
           <AnswerRoute answers={answers} question={question}
           voteAnswer={voteAnswer} deleteAnswer={deleteAnswer}
-          disabled={disabled} /> } />
+          disabled={disabled} setErrorMsg={setErrorMsg} errorMsg={errorMsg} /> } />
         <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
         <Route path='/edit/:answerId' element={ <FormRoute 
           answerList={answers}
