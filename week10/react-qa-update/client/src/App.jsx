@@ -93,8 +93,9 @@ function App() {
       .then(id => refreshAnswerList(id))
       .catch(err => {
         console.log(err);
-      }).
-      finally(() => { setWaiting(false); });
+      })
+      //finally(() => { setWaiting(false); });  // Already called in refreshAnswerList, 
+      // here it will be immediately called after the then without waiting for refreshAnswerList, so it is not useful
   }, []);
 
 
@@ -165,7 +166,7 @@ function App() {
     );
 
     setDisabled(true);
-    const newAnswer = Object.assign({}, answer, {questionId: 12345});
+    const newAnswer = Object.assign({}, answer, {questionId: question.id});
     API.addAnswer(newAnswer)
       .catch( err => handleError(err) )
       .finally( ()=> refreshAnswerList(question.id) );
