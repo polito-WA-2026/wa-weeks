@@ -120,6 +120,19 @@ function App() {
 
   }
 
+  useEffect(() => {
+    const questionId = 1;
+    API.getQuestion(questionId)
+      .then(q => { setQuestion(q); return q.id; })
+      .then(id => refreshAnswerList(id))
+      .catch(err => {
+        console.log(err);
+      })
+      //finally(() => { setWaiting(false); });  // Already called in refreshAnswerList, 
+      // here it will be immediately called after the then without waiting for refreshAnswerList, so it is not useful
+  }, []);
+
+
   const refreshAnswerList = (questionId) => {
     API.getAnswersByQuestionId(questionId)
       .then(answerList => {
