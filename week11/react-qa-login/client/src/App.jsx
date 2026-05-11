@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Col, Container, Row, Navbar, Button, Spinner, Alert } from 'react-bootstrap';
 import { Routes, Route, Outlet, Link, Navigate, useNavigate } from 'react-router';
 import './App.css';
@@ -119,8 +119,30 @@ function App() {
     }
     setErrorMsg(errMsg);
 
-    
+    if (errMsg === 'Not authenticated')
+      setTimeout(() => {  // do logout in the app state
+        setUser(undefined); setLoggedIn(false); refreshAnswerList(question.id);
+      }, 2000);
+    else
+      setTimeout(()=>refreshAnswerList(question.id), 2000);  // Fetch the current version from server, after a while
   }
+
+
+  useEffect(()=> {
+    const checkAuth = async() => {
+      try {
+        // here you have the user info, if already logged in
+        const user = await API.getUserInfo();
+        setLoggedIn(true);
+        setUser(user);
+      } catch(err) {
+        // NO need to do anything: user is simply not yet authenticated
+        //handleError(err);
+      }
+    };
+    checkAuth();
+  }, []);
+
 
   useEffect(() => {
     const questionId = 1;
@@ -134,11 +156,6 @@ function App() {
       // here it will be immediately called after the then without waiting for refreshAnswerList, so it is not useful
   }, []);
 
-  useEffect(() => { 
-    API.getUserInfo()
-      .then(user => { setUser(user); setLoggedIn(true); })
-      .catch(err => {})
-  }, []);
 
   const refreshAnswerList = (questionId) => {
     API.getAnswersByQuestionId(questionId)
@@ -195,7 +212,7 @@ function App() {
 
   function saveExistingAnswer(answer) {
     setAnswers( answerList => 
-      answerList.map( e => e.id === answer.id ? { ...answer, status: 'updated'} : e)
+      answerList.map( e => e.id === answer.id ? { ...answer, respondent: user.name, status: 'updated'} : e)
     );
     setDisabled(true);
     API.updateAnswer(answer)
@@ -205,19 +222,20 @@ function App() {
 
   const doLogOut = async () => {
     await API.logOut();
-    setUser(undefined);
     setLoggedIn(false);
+    setUser(undefined);
+    /* set application state to empty if appropriate */
   }
 
   const loginSuccessful = (user) => {
     setUser(user);
     setLoggedIn(true);
-    refreshAnswerList(question.id);
+    refreshAnswerList(question.id);  // load latest version of data, if appropriate
   }
 
   return (
     <Routes>
-      <Route path='/' element={<Layout user={user} logout={doLogOut} />}>
+      <Route path='/' element={<Layout user={user} loggedIn={loggedIn} logout={doLogOut} />}>
           <Route index element={ waiting ? <Row><Col><Spinner /></Col></Row> : 
           <AnswerRoute question={question} answers={answers}
             voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} 
@@ -227,7 +245,7 @@ function App() {
           <Route path='/edit/:answerId' element={<FormRoute answerList={answers}
             saveExistingAnswer={saveExistingAnswer} />} />
       </Route>
-      <Route path='/login' element={<LoginForm loginSuccessful={loginSuccessful} />} />
+      <Route path='/login' element={loggedIn? <Navigate replace to='/' />:  <LoginForm loginSuccessful={loginSuccessful} />} />
       <Route path='/*' element={<DefaultRoute />} />
     </Routes>
   );
@@ -240,7 +258,7 @@ function Layout(props) {
     <Container fluid>
       <Row>
         <Col>
-          <MyHeader user={props.user} logout={props.logout} />
+          <MyHeader user={props.user} loggedIn={props.loggedIn} logout={props.logout} />
         </Col>
       </Row>
       <Outlet />
