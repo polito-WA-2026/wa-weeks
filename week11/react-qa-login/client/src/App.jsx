@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { Col, Container, Row, Navbar, Button, Spinner, Alert } from 'react-bootstrap';
 import { Routes, Route, Outlet, Link, Navigate, useNavigate } from 'react-router';
 import './App.css';
@@ -8,11 +8,11 @@ import './App.css';
 import { AnswerTable } from './components/AnswerComponents.jsx';
 import { QuestionDescription } from './components/QuestionComponents.jsx';
 import { FormRoute } from './components/FormComponents.jsx';
+import { LoginForm } from './components/AuthComponents.jsx';
 
 //import { Question } from './QAModels.js';
 
 import API from './API.js';
-import { LoginForm } from './components/AuthComponents.jsx';
 
 //const question = new Question(1, 'Best way of enumerating an array in JS?', 'Enrico', '2024-03-01');
 //question.init();
@@ -82,10 +82,8 @@ function AnswerRoute(props) {   // former Main component
     </Row>
     <Row>
       <Col>
-         <Link to='/add'>
-           <Button>Add something</Button>
-         </Link>
-         </Col>
+        <Button variant='primary' onClick={() => navigate('/add')} disabled={props.user? false : true}>Add an answer</Button> 
+     </Col>
     </Row> 
   </>
   );
@@ -101,6 +99,9 @@ function App() {
   const [disabled, setDisabled] = useState(false);
 
   const [errorMsg, setErrorMsg] = useState('');
+
+  const [user, setUser] = useState(undefined);
+  const [loggedIn, setLoggedIn] = useState(false);
 
 
   function handleError(err) {
@@ -118,6 +119,7 @@ function App() {
     }
     setErrorMsg(errMsg);
 
+    
   }
 
   useEffect(() => {
@@ -132,6 +134,11 @@ function App() {
       // here it will be immediately called after the then without waiting for refreshAnswerList, so it is not useful
   }, []);
 
+  useEffect(() => { 
+    API.getUserInfo()
+      .then(user => { setUser(user); setLoggedIn(true); })
+      .catch(err => {})
+  }, []);
 
   const refreshAnswerList = (questionId) => {
     API.getAnswersByQuestionId(questionId)
@@ -196,17 +203,31 @@ function App() {
       .finally( () => refreshAnswerList(question.id) );
   }
 
+  const doLogOut = async () => {
+    await API.logOut();
+    setUser(undefined);
+    setLoggedIn(false);
+  }
+
+  const loginSuccessful = (user) => {
+    setUser(user);
+    setLoggedIn(true);
+    refreshAnswerList(question.id);
+  }
+
   return (
     <Routes>
-      <Route path='/' element={<Layout />}>
-          <Route index element={ waiting ? <Row><Col><Spinner /></Col></Row> : <AnswerRoute question={question} answers={answers}
+      <Route path='/' element={<Layout user={user} logout={doLogOut} />}>
+          <Route index element={ waiting ? <Row><Col><Spinner /></Col></Row> : 
+          <AnswerRoute question={question} answers={answers}
             voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} 
             errorMsg={errorMsg} setErrorMsg={setErrorMsg}
-            disabled={disabled} /> } />
+            disabled={disabled} user={user} /> } />
           <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
           <Route path='/edit/:answerId' element={<FormRoute answerList={answers}
             saveExistingAnswer={saveExistingAnswer} />} />
       </Route>
+      <Route path='/login' element={<LoginForm loginSuccessful={loginSuccessful} />} />
       <Route path='/*' element={<DefaultRoute />} />
     </Routes>
   );
@@ -219,7 +240,7 @@ function Layout(props) {
     <Container fluid>
       <Row>
         <Col>
-          <MyHeader />
+          <MyHeader user={props.user} logout={props.logout} />
         </Col>
       </Row>
       <Outlet />

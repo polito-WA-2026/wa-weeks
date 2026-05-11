@@ -54,7 +54,7 @@ function AnswerForm(props) {
 
             const ans = {
                 text: text,
-                respondent: respondent,
+                //respondent: respondent,
                 score: parseInt(score),
                 date: dayjs(date)
             }
@@ -93,12 +93,12 @@ function AnswerForm(props) {
                 <Form.Control type="text" name="text" value={text}
                     onChange={(event) => setText(event.target.value)} />
             </Form.Group>
-
+{/*
             <Form.Group>
                 <Form.Label>Respondent</Form.Label>
                 <Form.Control type="text" name="respondent" value={respondent} onChange={(event) => setRespondent(event.target.value)} />
             </Form.Group>
-
+*/}
             <Form.Group>
                 <Form.Label>Score</Form.Label>
                 <Form.Control type="number" name="score" value={score} onChange={handleScore} />
