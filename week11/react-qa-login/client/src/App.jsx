@@ -180,7 +180,7 @@ function App() {
 
     setDisabled(true);
     const newAnswer = Object.assign({}, answer, {questionId: question.id});
-    API.addAnswer(answer)
+    API.addAnswer(newAnswer)
       .catch( err => handleError(err) )
       .finally( () => refreshAnswerList(question.id) );
 
