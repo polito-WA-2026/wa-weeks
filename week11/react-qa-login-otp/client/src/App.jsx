@@ -8,7 +8,7 @@ import './App.css';
 import { AnswerTable } from './components/AnswerComponents.jsx';
 import { QuestionDescription } from './components/QuestionComponents.jsx';
 import { FormRoute } from './components/FormComponents.jsx';
-import { LoginForm } from './components/AuthComponents.jsx';
+import { LoginForm, TotpForm } from './components/AuthComponents.jsx';
 
 //import { Question } from './QAModels.js';
 
@@ -31,7 +31,7 @@ function MyHeader(props) {
       </Navbar.Brand>
       {name ? <div>
         <Navbar.Text className='fs-5'>
-          {`Signed in as: ${name}`}
+          {`Signed in ${props.loggedInTotp ? '(2FA)' : ''} as: ${name}`}
         </Navbar.Text>
         <Button className='mx-2' variant='danger' onClick={props.logout}>Logout</Button>
       </div> :
@@ -77,7 +77,7 @@ function AnswerRoute(props) {   // former Main component
     <Row>
       <Col>
         <AnswerTable listOfAnswers={props.answers} vote={props.voteAnswer} delete={props.deleteAnswer} disabled={props.disabled}
-             errorMsg={props.errorMsg} user={props.user} />
+             errorMsg={props.errorMsg} user={props.user} disableTotpAction={props.disableTotpAction} />
       </Col>
     </Row>
     <Row>
@@ -102,6 +102,7 @@ function App() {
 
   const [user, setUser] = useState(undefined);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedInTotp, setLoggedInTotp] = useState(false);
 
 
   function handleError(err) {
@@ -224,6 +225,7 @@ function App() {
     await API.logOut();
     setLoggedIn(false);
     setUser(undefined);
+    setLoggedInTotp(false);
     /* set application state to empty if appropriate */
   }
 
@@ -235,20 +237,40 @@ function App() {
 
   return (
     <Routes>
-      <Route path='/' element={<Layout user={user} loggedIn={loggedIn} logout={doLogOut} />}>
+      <Route path='/' element={<Layout user={user} loggedIn={loggedIn} loggedInTotp={loggedInTotp}
+                     logout={doLogOut} />}>
           <Route index element={ waiting ? <Row><Col><Spinner /></Col></Row> : 
           <AnswerRoute question={question} answers={answers}
             voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} 
             errorMsg={errorMsg} setErrorMsg={setErrorMsg}
-            disabled={disabled} user={user} /> } />
+            disabled={disabled} user={user} disableTotpAction={!loggedInTotp} /> } />
           <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
           <Route path='/edit/:answerId' element={<FormRoute answerList={answers}
             saveExistingAnswer={saveExistingAnswer} />} />
       </Route>
-      <Route path='/login' element={loggedIn? <Navigate replace to='/' />:  <LoginForm loginSuccessful={loginSuccessful} />} />
+      <Route path='/login' element={ <LoginWithTotp loginSuccessful={loginSuccessful} 
+              loggedIn={loggedIn} user={user} loggedInTotp={loggedInTotp}
+              setLoggedInTotp={setLoggedInTotp} /> } />
+        
       <Route path='/*' element={<DefaultRoute />} />
     </Routes>
   );
+}
+
+function LoginWithTotp(props) {
+  if (props.loggedIn) {
+    if (props.user.canDoTotp) {
+        if (props.loggedInTotp) {
+        return <Navigate replace to='/' />;
+      } else {
+        return <TotpForm totpSuccessful={() => props.setLoggedInTotp(true)} />;
+      }
+    } else {
+      return <Navigate replace to='/' />;
+    }
+  } else {
+    return <LoginForm loginSuccessful={props.loginSuccessful} />;
+  }
 }
 
 
@@ -258,7 +280,7 @@ function Layout(props) {
     <Container fluid>
       <Row>
         <Col>
-          <MyHeader user={props.user} loggedIn={props.loggedIn} logout={props.logout} />
+          <MyHeader user={props.user} loggedIn={props.loggedIn} loggedInTotp={props.loggedInTotp} logout={props.logout} />
         </Col>
       </Row>
       <Outlet />
