@@ -77,7 +77,7 @@ function AnswerRoute(props) {   // former Main component
     <Row>
       <Col>
         <AnswerTable listOfAnswers={props.answers} vote={props.voteAnswer} delete={props.deleteAnswer} disabled={props.disabled}
-             errorMsg={props.errorMsg} user={props.user} disableTotpAction={props.disableTotpAction} />
+             errorMsg={props.errorMsg} user={props.user} disableTotpActions={props.disableTotpActions} />
       </Col>
     </Row>
     <Row>
@@ -136,6 +136,8 @@ function App() {
         const user = await API.getUserInfo();
         setLoggedIn(true);
         setUser(user);
+        if (user.isTotp)
+          setLoggedInTotp(true);
       } catch(err) {
         // NO need to do anything: user is simply not yet authenticated
         //handleError(err);
@@ -243,7 +245,7 @@ function App() {
           <AnswerRoute question={question} answers={answers}
             voteAnswer={voteAnswer} deleteAnswer={deleteAnswer} 
             errorMsg={errorMsg} setErrorMsg={setErrorMsg}
-            disabled={disabled} user={user} disableTotpAction={!loggedInTotp} /> } />
+            disabled={disabled} user={user} disableTotpActions={!loggedInTotp} /> } />
           <Route path='/add' element={ <FormRoute addAnswer={addAnswer} /> } />
           <Route path='/edit/:answerId' element={<FormRoute answerList={answers}
             saveExistingAnswer={saveExistingAnswer} />} />

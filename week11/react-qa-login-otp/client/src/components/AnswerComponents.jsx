@@ -11,7 +11,7 @@ function AnswerActions(props) {
       <Button className="mx-1" variant="primary" onClick={props.upvote} disabled={props.disabled}><i className="bi bi-arrow-up"></i></Button>
       <Button className="mx-1" variant="primary" onClick={props.downvote} disabled={props.disabled} ><i className="bi bi-arrow-down"></i></Button>      
       <Button className="mx-1" variant="danger" onClick={props.delete} 
-      disabled={props.disabled || props.disableUserActions || props.disableTotpAction}><i className="bi bi-trash"></i></Button>
+      disabled={props.disabled || props.disableUserActions || props.disableTotpActions}><i className="bi bi-trash"></i></Button>
       <Button className="mx-1" variant="warning" onClick={()=>navigate(`/edit/${props.editId}`)} disabled={props.disabled || props.disableUserActions}><i className="bi bi-pencil"></i></Button>
     </>
   );
@@ -45,7 +45,7 @@ function AnswerRow(props) {
         <td><AnswerActions upvote={()=>props.vote(e.id, 1)} downvote={()=>props.vote(e.id, -1)}
                 delete={()=>props.delete(e.id)} editId={e.id}
 disabled={props.disabled} disableUserActions={e.respondentId !== props.userId}
-disableTotpAction={props.disableTotpAction} /></td>
+disableTotpActions={props.disableTotpActions} /></td>
       </tr>
     );
   }
@@ -68,7 +68,7 @@ disableTotpAction={props.disableTotpAction} /></td>
                   {props.listOfAnswers.map( (e) => 
                    <AnswerRow key={e.id} answer={e} vote={props.vote} delete={props.delete} 
                    edit={props.edit} disabled={props.disabled} userId={props.user ? props.user.id : -1}
-                   disableTotpAction={props.disableTotpAction} /> )
+                   disableTotpActions={props.disableTotpActions} /> )
           }
         </tbody>
       </Table>
